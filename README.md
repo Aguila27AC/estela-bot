@@ -1,0 +1,2 @@
+# nidori-bot
+discord bot
