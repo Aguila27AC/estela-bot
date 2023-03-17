@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { ChannelType } = require('discord.js') 
-const { chatgpt } = require('./../chatgpt')
+const { chatgpt } = require('./../chatgpt.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -51,7 +51,7 @@ module.exports = {
 				return
 			});
 
-			return interaction.reply('Preparando anuncio...');
+			return interaction.reply({ content: 'Preparando anuncio...', ephemeral: true });
 		return interaction.reply('No option was provided!');
 	},
 };

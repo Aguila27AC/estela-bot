@@ -4,7 +4,7 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 
-const  { chatgpt } = require('./chatgpt.js')
+const  { chatgpt, chatAddMessage, chat_log, max_chat_log } = require('./chatgpt.js')
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
@@ -13,8 +13,6 @@ client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-
-const log = []
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
@@ -56,20 +54,27 @@ client.on("messageCreate", (message) => {
     if (message.author.bot || message.mentions.everyone) return;
 
     if (message.mentions.has(client.user.id)) {
-		console.log(message.author.username + ": " + message.cleanContent)
-		log.push({ role: "user", content: message.author.username + ": " + message.cleanContent})
+		console.log(message.channelId + ": " + message.author.username + ": " + message.cleanContent)
+		chatAddMessage(message.channelId, { role: "user", content: message.author.username + ": " + message.cleanContent})
 
-		console.log("log length: " + log.length)
+		let i = 0
+		for (i = 0; i < chat_log.length; i++) {
+			if (chat_log[i].id === message.channelId) {
+				if (chat_log[i].messages.length > max_chat_log) {
+					const position = chat_log[i].messages.length - max_chat_log;
+					chat_log[i].messages.splice(0, position);
+				}
+				break;
+			}
+		}
 
-		if (log.length > 12) {
-			const posicion_a_eliminar = log.length - 14;
-			log.splice(0, posicion_a_eliminar);
-		}		  
+		console.log("chat_log[i].messages.length: " + chat_log[i].messages.length)
 
-		chatgpt(log)
+		chatgpt(chat_log[i].messages)
 		.then((response) => {
-			log.push({ role: response["data"]["choices"][0]["message"]["role"] , content: response["data"]["choices"][0]["message"]["content"] })
-			console.log("Nidori: " + response["data"]["choices"][0]["message"]["content"])
+			chatAddMessage(message.channelId, { role: response["data"]["choices"][0]["message"]["role"], content: response["data"]["choices"][0]["message"]["content"]})
+			console.log(message.channelId + ": " + "Nidori: " + response["data"]["choices"][0]["message"]["content"])
+
 			message.reply(response["data"]["choices"][0]["message"]["content"]);
 		})
 		.catch((err) => {
