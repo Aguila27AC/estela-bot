@@ -8,7 +8,7 @@ const configuration = new Configuration({
 const description = characterDescription
 
 const chat_log = []
-const max_chat_log = 12
+const max_chat_log = 14
 
 function chatAddMessage(id, message) {
 	let found = false;
@@ -66,7 +66,7 @@ const chat = async (messages) => {
 	const response = await openai.createChatCompletion({
 		model: "gpt-3.5-turbo",
 		messages: chat_log,
-        temperature: 0.8,
+        temperature: 0.9,
 	});
 
     console.log("prompt_tokens: " + response["data"]["usage"]["prompt_tokens"] + ", completion_tokens: " + response["data"]["usage"]["completion_tokens"] + ", total_tokens: " + response["data"]["usage"]["total_tokens"])

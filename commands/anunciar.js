@@ -19,7 +19,7 @@ module.exports = {
 				.setDescription('Añade un enlace')
 				.setRequired(true)
 				.addChoices(
-					{ name: 'NINGUNO', value: '' },
+					{ name: 'NINGUNO', value: ' ' },
 					{ name: 'Twitch', value: 'https://www.twitch.tv/aguila27ac' },
 					{ name: 'Youtube', value: 'https://www.youtube.com/@Aguila27AC' },
 					{ name: 'Twitter', value: 'https://twitter.com/Aguila27AC' },
